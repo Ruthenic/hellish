@@ -4,7 +4,7 @@ print(welcomemessage)
 path = os.environ["PATH"].split(":") #we *should not* modify system path
 home = os.environ["HOME"]
 userpath = [] #TODO: save this inbetween sessions?
-ps1 = "\n$PWD\n\\_$ "
+ps1 = "\n| $PWD\n\\_$ "
 pwd = home
 alias = {"mkcd": ["mkdir $1", "cd $1"]} #TODO: make user creatable
 while True:
@@ -40,7 +40,6 @@ while True:
                 pass
         if not isCmdFound:
             try:
-                print(splitcmd)
                 aliasCmds = alias[splitcmd[0]]
                 for aliasCmd in aliasCmds:
                     aliasCmd = aliasCmd.replace("$1", splitcmd[1]).split(" ") #who needs more than one arg
