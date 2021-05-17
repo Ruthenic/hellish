@@ -1,4 +1,4 @@
-import os,shutil,subprocess
+import os,shutil,subprocess,readline
 welcomemessage = "Welcome to HelliSH"
 print(welcomemessage)
 path = os.environ["PATH"].split(":") #we *should not* modify system path
@@ -7,8 +7,22 @@ userpath = [] #TODO: save this inbetween sessions?
 ps1 = "\n| $PWD\n\\_$ "
 pwd = home
 alias = {"mkcd": ["mkdir $1", "cd $1"]} #TODO: make user creatable
+readline.parse_and_bind('tab: complete')
+try:
+    readline.read_history_file(home + "/" + ".hellishhistory")
+except:
+    pass
+def rlGetHistory():
+    num_items = readline.get_current_history_length()
+    return [readline.get_history_item(i) for i in range(0, num_items)]
 while True:
-    cmd = input(ps1.replace("$PWD", pwd).replace(home, "~"))
+    try:
+        cmd = input(ps1.replace("$PWD", pwd).replace(home, "~"))
+    except EOFError:
+        print("Thanks for visiting HelliSH.")
+        readline.write_history_file(home + "/" + ".hellishhistory")
+        exit()
+    readline.add_history(cmd)
     splitcmd = cmd.split(" ")
     #shell builtins
     if splitcmd[0] == "cd":
@@ -28,6 +42,7 @@ while True:
         os.environ["PWD"] = pwd
     elif splitcmd[0] == "exit":
         print("Thanks for visiting HelliSH.")
+        readline.write_history_file(home + "/" + ".hellishhistory")
         exit()
     else:
         isCmdFound = False
