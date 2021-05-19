@@ -5,7 +5,11 @@ path = os.environ["PATH"].split(":") #we *should not* modify system path
 home = os.environ["HOME"]
 userpath = [] #TODO: save this inbetween sessions?
 ps1 = "[\\u@\\h \\W]$ "
-pwd = home
+try:
+    pwd = os.environ["PWD"]
+except:
+    pwd = home
+    os.environ["PWD"] = pwd
 alias = {"mkcd": ["mkdir $1", "cd $1"]} #TODO: make user creatable
 readline.parse_and_bind('tab: complete')
 try:
