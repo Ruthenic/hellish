@@ -15,7 +15,6 @@ except:
 if not os.path.isfile(home + "/.hellishrc"):
     pathlib.Path(home + "/.hellishrc").touch()
 rc = open(home + "/.hellishrc", "r").read().replace("\\033", "\033").split("\n")
-print(rc)
 def rlGetHistory():
     num_items = readline.get_current_history_length()
     return [readline.get_history_item(i) for i in range(0, num_items)]
