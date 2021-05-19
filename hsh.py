@@ -1,4 +1,4 @@
-import os,shutil,subprocess,readline
+import os,shutil,subprocess,readline,pathlib,socket
 welcomemessage = "Welcome to HelliSH"
 print(welcomemessage)
 path = os.environ["PATH"].split(":") #we *should not* modify system path
