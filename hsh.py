@@ -92,6 +92,8 @@ while True:
         readline.write_history_file(home + "/" + ".hellishhistory")
         exit()
     readline.add_history(cmd)
+    if cmd == "" or cmd.startswith("#"):
+        continue
     splitcmd = cmd.split(" ")
     #shell builtins
     if splitcmd[0] == "cd":
