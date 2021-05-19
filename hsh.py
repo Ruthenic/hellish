@@ -94,6 +94,8 @@ while True:
         print("\nThanks for visiting HelliSH.")
         readline.write_history_file(home + "/" + ".hellishhistory")
         exit()
+    except KeyboardInterrupt:
+        print("^C")
     readline.add_history(cmd)
     if cmd == "" or cmd.startswith("#"):
         continue
