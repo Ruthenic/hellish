@@ -4,7 +4,7 @@ print(welcomemessage)
 path = os.environ["PATH"].split(":") #we *should not* modify system path
 home = os.environ["HOME"]
 userpath = [] #TODO: save this inbetween sessions?
-ps1 = "\n| \033[0;31m$PWD\033[0m\n\\_$ "
+ps1 = "[\\u@\\h \\W]$ "
 pwd = home
 alias = {"mkcd": ["mkdir $1", "cd $1"]} #TODO: make user creatable
 readline.parse_and_bind('tab: complete')
@@ -31,9 +31,58 @@ def cd(home, splitcmd, pwd):
                 else:
                     pwd += "/" + i
     return pwd
+def parsePrompt(ps1, pwd, home):
+    ps1 = ps1.replace("$PWD", pwd).replace(home, "~")
+    #convert bashisms of ps1
+    #example prompt with bash: "[\u@\h \W]$"
+    ps1 = ps1.replace("\\u", os.environ["USER"])
+    ps1 = ps1.replace("\\h", socket.gethostname())
+    ps1 = ps1.replace("\\W", pwd.split("/")[-1])
+    return ps1
+for cmd in rc:
+    if cmd == "" or cmd.startswith("#"):
+        continue
+    splitcmd = cmd.split(" ")
+    if splitcmd[0] == "cd":
+        pwd = cd(home, splitcmd, pwd)
+        os.environ["PWD"] = pwd
+    elif splitcmd[0] == "ps1":
+        ps1 = cmd.replace("ps1 ", "").replace("\\n", "\n")
+    else:
+        isCmdFound = False
+        for dire in path:
+            try:
+                subprocess.run([dire + "/" + splitcmd[0]] + splitcmd[1:], cwd=pwd)
+                isCmdFound = True
+                break
+            except:
+                pass
+        if not isCmdFound:
+            try:
+                aliasCmds = alias[splitcmd[0]]
+                for aliasCmd in aliasCmds:
+                    aliasCmd = aliasCmd.replace("$1", splitcmd[1]).split(" ") #who needs more than one arg
+                    if aliasCmd[0] == "cd":
+                        if cmd == "cd":
+                           pwd = home
+                        elif aliasCmd[1].startswith("/"):
+                            #*probably* an absolute path
+                            pwd = aliasCmd[1]
+                        else:
+                            #relative path
+                            ssd = aliasCmd[1].split("/")
+                            for i in ssd:
+                                if i == "..":
+                                    pwd = pwd.replace("/" + pwd.split("/")[len(pwd.split("/"))-1], "")
+                                else:
+                                    pwd += "/" + i
+                    else:
+                        subprocess.run([dire + "/" + aliasCmd[0]] + aliasCmd[1:], cwd=pwd)
+            except:
+                print(splitcmd[0] + ": command in .hellishrc not found!")
 while True:
     try:
-        cmd = input(ps1.replace("$PWD", pwd).replace(home, "~"))
+        cmd = input(parsePrompt(ps1, pwd, home)) #example: "[\u@\h \W]\$"" 
     except EOFError:
         print("\nThanks for visiting HelliSH.")
         readline.write_history_file(home + "/" + ".hellishhistory")
