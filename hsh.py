@@ -15,7 +15,6 @@ except:
 def rlGetHistory():
     num_items = readline.get_current_history_length()
     return [readline.get_history_item(i) for i in range(0, num_items)]
-
 def cd(home, splitcmd, pwd):
     if splitcmd[0] == "cd":
         if cmd == "cd":
@@ -36,7 +35,7 @@ while True:
     try:
         cmd = input(ps1.replace("$PWD", pwd).replace(home, "~"))
     except EOFError:
-        print("Thanks for visiting HelliSH.")
+        print("\nThanks for visiting HelliSH.")
         readline.write_history_file(home + "/" + ".hellishhistory")
         exit()
     readline.add_history(cmd)
