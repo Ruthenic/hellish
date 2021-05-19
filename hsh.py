@@ -15,16 +15,8 @@ except:
 def rlGetHistory():
     num_items = readline.get_current_history_length()
     return [readline.get_history_item(i) for i in range(0, num_items)]
-while True:
-    try:
-        cmd = input(ps1.replace("$PWD", pwd).replace(home, "~"))
-    except EOFError:
-        print("Thanks for visiting HelliSH.")
-        readline.write_history_file(home + "/" + ".hellishhistory")
-        exit()
-    readline.add_history(cmd)
-    splitcmd = cmd.split(" ")
-    #shell builtins
+
+def cd(home, splitcmd, pwd):
     if splitcmd[0] == "cd":
         if cmd == "cd":
             pwd = home
@@ -39,7 +31,22 @@ while True:
                     pwd = pwd.replace("/" + pwd.split("/")[len(pwd.split("/"))-1], "")
                 else:
                     pwd += "/" + i
+    return pwd
+while True:
+    try:
+        cmd = input(ps1.replace("$PWD", pwd).replace(home, "~"))
+    except EOFError:
+        print("Thanks for visiting HelliSH.")
+        readline.write_history_file(home + "/" + ".hellishhistory")
+        exit()
+    readline.add_history(cmd)
+    splitcmd = cmd.split(" ")
+    #shell builtins
+    if splitcmd[0] == "cd":
+        pwd = cd(home, splitcmd, pwd)
         os.environ["PWD"] = pwd
+    elif splitcmd[0] == "ps1":
+        ps1 = cmd.replace("ps1 ", "").replace("\\n", "\n")
     elif splitcmd[0] == "exit":
         print("Thanks for visiting HelliSH.")
         readline.write_history_file(home + "/" + ".hellishhistory")
