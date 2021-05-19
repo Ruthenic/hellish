@@ -20,6 +20,7 @@ def rlGetHistory():
     return [readline.get_history_item(i) for i in range(0, num_items)]
 def cd(home, splitcmd, pwd):
     if splitcmd[0] == "cd":
+        oldpwd = pwd
         if cmd == "cd":
             pwd = home
         elif splitcmd[1].startswith("/"):
@@ -33,6 +34,9 @@ def cd(home, splitcmd, pwd):
                     pwd = pwd.replace("/" + pwd.split("/")[len(pwd.split("/"))-1], "")
                 else:
                     pwd += "/" + i
+        if not os.path.isdir(pwd):
+            print("Directory {} not found and/or is a file!".format(pwd.split("/")[-1]))
+            return oldpwd
     return pwd
 def parsePrompt(ps1, pwd, home):
     ps1 = ps1.replace("$PWD", pwd).replace(home, "~")
