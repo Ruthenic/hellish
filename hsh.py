@@ -35,7 +35,7 @@ def cd(home, splitcmd, pwd):
             ssd = splitcmd[1].split("/")
             for i in ssd:
                 if i == "..":
-                    pwd = pwd.replace("/" + pwd.split("/")[len(pwd.split("/"))-1], "")
+                    pwd = pwd.replace("/" + pwd.split("/")[-1], "")
                 else:
                     pwd += "/" + i
         if not os.path.isdir(pwd):
@@ -88,7 +88,7 @@ for cmd in rc:
                             ssd = aliasCmd[1].split("/")
                             for i in ssd:
                                 if i == "..":
-                                    pwd = pwd.replace("/" + pwd.split("/")[len(pwd.split("/"))-1], "")
+                                    pwd = pwd.replace("/" + pwd.split("/")[-1], "")
                                 else:
                                     pwd += "/" + i
                     else:
@@ -150,7 +150,7 @@ while True:
                             ssd = aliasCmd[1].split("/")
                             for i in ssd:
                                 if i == "..":
-                                    pwd = pwd.replace("/" + pwd.split("/")[len(pwd.split("/"))-1], "")
+                                    pwd = pwd.replace("/" + pwd.split("/")[-1], "")
                                 else:
                                     pwd += "/" + i
                     else:
