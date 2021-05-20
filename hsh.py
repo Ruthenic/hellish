@@ -65,8 +65,8 @@ for cmd in rc:
         isCmdFound = False
         for dire in path:
             try:
-                if splitcmd[0] in aliasCmds:
-                    raise Exception
+                #if splitcmd[0] in aliasCmds:
+                #    raise Exception
                 subprocess.run([dire + "/" + splitcmd[0]] + splitcmd[1:], cwd=pwd)
                 isCmdFound = True
                 break
