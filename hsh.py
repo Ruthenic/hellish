@@ -10,7 +10,7 @@ try:
 except:
     pwd = home
     os.environ["PWD"] = pwd
-alias = {"mkcd": ["mkdir $1", "cd $1"]} #TODO: make user creatable
+alias = {"mkcd": ["mkdir $1", "cd $1"]}
 readline.parse_and_bind('tab: complete')
 try:
     readline.read_history_file(home + "/" + ".hellishhistory")
@@ -59,10 +59,14 @@ for cmd in rc:
         os.environ["PWD"] = pwd
     elif splitcmd[0] == "ps1":
         ps1 = cmd.replace("ps1 ", "").replace("\\n", "\n")
+    elif splitcmd[0] == "alias":
+        alias[splitcmd[1]] = cmd.replace(splitcmd[0] + " " + splitcmd[1] + " ", "").split(" && ") #lets go i don't use "&&" for literally anything else in the program
     else:
         isCmdFound = False
         for dire in path:
             try:
+                if splitcmd[0] in aliasCmds:
+                    raise Exception
                 subprocess.run([dire + "/" + splitcmd[0]] + splitcmd[1:], cwd=pwd)
                 isCmdFound = True
                 break
@@ -110,6 +114,8 @@ while True:
         os.environ["PWD"] = pwd
     elif splitcmd[0] == "ps1":
         ps1 = cmd.replace("ps1 ", "").replace("\\n", "\n")
+    elif splitcmd[0] == "alias":
+        alias[splitcmd[1]] = cmd.replace(splitcmd[0] + " " + splitcmd[1] + " ", "").split(" && ") #lets go i don't use "&&" for literally anything else in the program
     elif splitcmd[0] == "exit":
         print("Thanks for visiting HelliSH.")
         readline.write_history_file(home + "/" + ".hellishhistory")
@@ -118,6 +124,8 @@ while True:
         isCmdFound = False
         for dire in path:
             try:
+                if splitcmd[0] in aliasCmds:
+                    raise Exception
                 subprocess.run([dire + "/" + splitcmd[0]] + splitcmd[1:], cwd=pwd)
                 isCmdFound = True
                 break
@@ -127,7 +135,10 @@ while True:
             try:
                 aliasCmds = alias[splitcmd[0]]
                 for aliasCmd in aliasCmds:
-                    aliasCmd = aliasCmd.replace("$1", splitcmd[1]).split(" ") #who needs more than one arg
+                    try:
+                        aliasCmd = aliasCmd.replace("$1", splitcmd[1]).split(" ") #who needs more than one arg
+                    except:
+                        aliasCmd = aliasCmd.split(" ")
                     if aliasCmd[0] == "cd":
                         if cmd == "cd":
                            pwd = home
@@ -144,5 +155,6 @@ while True:
                                     pwd += "/" + i
                     else:
                         subprocess.run([dire + "/" + aliasCmd[0]] + aliasCmd[1:], cwd=pwd)
-            except:
+            except Exception as e:
+                print(str(e))
                 print(splitcmd[0] + ": command not found!")
